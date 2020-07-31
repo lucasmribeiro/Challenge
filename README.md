@@ -9,13 +9,13 @@ No entanto, esta verificação da mensagem era manual, o não é o esperado. Des
 O programa faz a leitura de um arquivo txt que contém a mensagem criptograda e a decodifica utilizando todas as chaves possíveis. Então ele analisa a veracidade das mensagens decodificadas e elege a chave que tem maior acertividade de palavras e indica a chave e a mensagem.
 
 # Requirements
-- CodeBlocks com MinGW
+- **CodeBlocks** com MinGW
 
 # How to use
 
-- Abrir o projeto Challenge.cbp no CodeBlocks.
-- No menu Project selecionar Set programs'arguments...
-- Na caixa de texto Program arguments informar: './SecretMessage.txt'
+- Abrir o projeto **Challenge.cbp** no **CodeBlocks**.
+- No menu ```Project``` selecionar ```Set programs'arguments...```
+- Na caixa de texto ```Program arguments``` informar: ```./SecretMessage.txt```
 - Compilar e executar o programa.
 
 # References
