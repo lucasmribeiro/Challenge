@@ -23,6 +23,7 @@ int findKey(vector<int> match);
 int wordExist(string word);
 
 /* Functions */
+// Lê a mensagem de um arquivo
 int readFile(string filename, string &text)
 {
     ifstream file;
@@ -30,7 +31,7 @@ int readFile(string filename, string &text)
     file.open(filename, ios::in);
     if(!file)
     {
-        cout << "Failed to read file." << endl;
+        cout << "Falha na leitura do arquivo" << endl;
         return 1;
     }
     while(!file.eof())
@@ -42,22 +43,23 @@ int readFile(string filename, string &text)
     file.close();
     return 0;
 }
+// Escreve a mensagem em um arquivo
 int writeFile(string filename, string &text)
 {
     ofstream file;
     file.open(filename, ios::trunc);
     if(!file)
     {
-        cout << "Failed to write file." << endl;
+        cout << "Falha na escrita do arquivo" << endl;
         return 1;
     }
     file << text << endl;
     file.close();
     return 0;
 }
+// Criptografa caracter por caracter da mensagem
 void encryptMessage(int key, string &text)
 {
-    // Encrypts character by character
     for(size_t k = 0; k < text.size(); k++)
     {
         int pos = letters.find(text[k], 0);
@@ -71,9 +73,9 @@ void encryptMessage(int key, string &text)
         }
     }
 }
+// Descriptografa caracter por caracter da mensagem
 void decryptMessage(int key, string &text)
 {
-    // Decrypts character by character
     for(size_t k = 0; k < text.size(); k++)
     {
         int pos = letters.find(text[k], 0);
@@ -87,6 +89,7 @@ void decryptMessage(int key, string &text)
         }
     }
 }
+// Regex para remoção de caracteres especiais
 string removeCharacteres(string text)
 {
     string ret;
@@ -94,6 +97,7 @@ string removeCharacteres(string text)
     ret = regex_replace(text, re, "");
     return ret;
 }
+// Converte caracter por caracter para upperCase
 string toUpperCase(string text)
 {
     string ret;
@@ -101,6 +105,7 @@ string toUpperCase(string text)
         ret.push_back(toupper(text[k]));
     return ret;
 }
+// Converte caracter por caracter para lowerCase
 string toLowerCase(string text)
 {
     string ret;
@@ -108,6 +113,7 @@ string toLowerCase(string text)
         ret.push_back(tolower(text[k]));
     return ret;
 }
+// Obtém a chave com maior incidência de palavras corretas
 int findKey(vector<int> combinations)
 {
     int key = 0;
@@ -118,6 +124,7 @@ int findKey(vector<int> combinations)
     }
     return key;
 }
+// Avalia se a palavra existe no dicionário de palavras
 int wordExist(string word)
 {
     ifstream file;
@@ -127,7 +134,6 @@ int wordExist(string word)
     while(!file.eof())
     {
         getline(file, wordFile);
-        // Verify if word exist in dictionary
         if(word == toUpperCase(wordFile))
         {
             file.close();
@@ -140,91 +146,90 @@ int wordExist(string word)
 
 int main(int argc, char* argv[])
 {
-    // Vector of string messages decrypt
+    // Vetor de combinações para cada chave
     vector<int> combinations;
+    // Vetor de palavras da mensagem
     vector<string> words;
+    // Mensagens descriptografadas
     string message[letters.size()];
 
-    // Strings
+    // Nome do Arquivo
     string filename;
+    // Mensagem lida
     string text;
-    string word;
+    // String auxiliar
     string aux;
 
-    // Ifstream
-    ifstream inputFile;
-    ofstream outputFile;
-
-    // Integer
+    // Chave
     int key;
 
-    // Get the filename of message
+    // Obtém o nome do arquivo informado por parametro 
     filename = argv[1];
 
-    cout << "Reading the message" << endl;
-    // Read file with the message
+    cout << "Lendo a mensagem criptografada" << endl;
     if(readFile(filename, text))
     {
         return -1;
     }
 
-    cout << "Decrypt the message with n-keys" << endl;
-    // Decrypt the message with n-key [0 ... 30]
+    cout << "Descriptografando a mensagem com as n-chaves [0 ... 30]" << endl;
     for(size_t k = 0; k < letters.size(); k++)
     {
-        // Copy the message to aux
+        // Copiando a mensagem para a string auxiliar
         aux.assign(text);
         decryptMessage(k, aux);
-        // Store the message descrypted in array of messages
+        // Salvando a mensagem descriptografada no vetor de mensagens
         message[k] = aux;
     }
-    cout << "Verify what message is valid" << endl;
-    // Verify what message is valid
+    cout << "Verificando a veracidade da mensagem" << endl;
+    // Vericando mensagem por mensagem a incidência de palavras validas
     for(size_t k = 0; k < letters.size(); k++)
     {
-        // Copy the message to auxiliar string
+        // Copiando a mensage para a string auxiliar
         aux.assign(message[k]);
         size_t i = 0;
         size_t j = aux.find(' ');
 
-        cout << "Spliting the words" << endl;
-        // Split the message with delimiter ' '
+        cout << "Separando as palavras da mensagem descriptografada com a chave: " << k <<  endl;
+        // Separando as palavras da mensagem
         while(j != string::npos)
         {
+            // Removendo caracteres especiais para armazenar a palavra
             words.push_back(removeCharacteres(aux.substr(i, j-i)));
             i = ++j;
             j = aux.find(' ', j);
             if (j == string::npos)
             {
+                // Removendo caracteres especiais para armazenar a palavra
                 words.push_back(removeCharacteres(aux.substr(i, aux.size())));
             }
         }
 
-        // Inicialize the combination with zero
+        // Inicializa a chave com zero incidências
         combinations.push_back(0);
 
-        cout << "Verify if the words are valid" << endl;
-        // Iterate the words of message
+        cout << "Verificando as palavras da mensagem descriptografada com a chave: " << k << endl;
+        // Percorrendo todas as palavras da mensagem
         for(size_t r = 0; r < words.size(); r++)
         {
-            // Verify if word of message exists
+            // Vericando se a palavra é válida
             if(wordExist(words[r]))
                 combinations[k]++;
             else
                 break;
         }
 
-        // Clean vector of words
+        // Limpando todas as palavras armazenadas
         words.clear();
     }
 
-    cout << "Finding the key" << endl;
-    // Find the key
+    cout << "Calculando qual é a chave" << endl;
+    // Calcula a chave com maior incidência de acerto
     key = findKey(combinations);
 
-    // Print the key and the message
-    cout << "Key is: " << key << endl;
-    cout << "Message is: " << message[key] << endl;
+    // Imprime a chave e a mensagem
+    cout << "Chave: " << key << endl;
+    cout << "Mensagem: " << message[key] << endl;
 
     return 0;
 }
